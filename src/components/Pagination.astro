@@ -1,0 +1,35 @@
+---
+import { Icon } from "astro-icon/components"
+
+const { page } = Astro.props
+---
+
+<nav aria-label="Пагинация" class="flex items-center gap-6 justify-center">
+	{
+		page.url.prev && (
+			<a
+				class="flex gap-3 items-center text-white hover:bg-zinc-700 transition-colors ease-linear bg-zinc-800 rounded-md px-3 py-1.5"
+				href={page.url.prev}
+				aria-label={`Перейти к странице  ${page.currentPage - 1} из ${page.lastPage}`}
+			>
+				<Icon name="mdi:arrow-left-bold" />
+				Назад
+			</a>
+		)
+	}
+	<span aria-current="page" class="text-zinc-500"
+		>{page.currentPage} из {page.lastPage}</span
+	>
+	{
+		page.url.next && (
+			<a
+				class="flex gap-3 items-center text-white hover:bg-zinc-700 transition-colors ease-linear bg-zinc-800 rounded-md px-3 py-1.5"
+				href={page.url.next}
+				aria-label={`Перейти к странице ${page.currentPage + 1} из ${page.lastPage}`}
+			>
+				Вперед
+				<Icon name="mdi:arrow-right-bold" />
+			</a>
+		)
+	}
+</nav>

@@ -1,0 +1,72 @@
+---
+import Footer from "@/components/partials/Footer.astro"
+import Header from "@/components/partials/Header.astro"
+import SEOHead from "@/components/SEOHead.astro"
+
+import "@/styles/tailwind.css"
+
+interface Props {
+	title: string
+	description: string
+	ogImage?: any
+	noIndex?: boolean
+	name?: string
+	author?: string
+	type?: boolean
+	locale?: string
+	noManifest?: boolean
+	datePublished?: string | any
+	dateModified?: string | any
+	canonicalURL?: any | string
+	container_max_w?: any
+}
+const {
+	datePublished,
+	dateModified,
+	noIndex,
+	name,
+	author,
+	title,
+	type,
+	description,
+	ogImage,
+	locale,
+	container_max_w,
+	canonicalURL = new URL(Astro.url.pathname, Astro.site),
+} = Astro.props
+---
+<html lang="ru" class="scroll-smooth">
+	<head>
+<!--
+
+   салама алейкум боурым ты че здесь нишлисен
+   айда кит моннам
+   базаришь тема
+   найди решение и приведи его на группу хоть наконец
+
+ -->
+
+		<SEOHead
+			noIndex={noIndex}
+			title={title}
+			description={description}
+			name={name}
+			author={author}
+			type={type}
+			locale={locale}
+			ogImage={ogImage}
+			datePublished={datePublished}
+			dateModified={dateModified}
+			canonicalURL={canonicalURL}
+		/>
+	</head>
+	<body class="flex min-h-screen flex-col text-black bg-white">
+		<Header />
+		<main class:list={`${container_max_w ?? "max-w-6xl"} container mx-auto flex-1 px-5`}>
+			<div class="flex flex-col gap-12 py-12">
+				<slot />
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>

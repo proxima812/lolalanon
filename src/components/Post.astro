@@ -1,0 +1,13 @@
+---
+const { data, slug, class: className } = Astro.props
+---
+
+<a
+	href={`/diaries/${slug}`}
+	class:list={["p-3 rounded-md ease-linear transition-all hover:bg-zinc-100", className]}
+>
+	<article class="flex flex-col gap-3">
+		<h3 class="text-xl font-bold">{data.title}</h3>
+		<p class="text-zinc-700">{data.description}</p>
+	</article>
+</a>

@@ -1,0 +1,18 @@
+---
+import { config } from "@/settings"
+import { Icon } from "astro-icon/components"
+const { container_max_w } = Astro.props
+---
+
+<header class="py-5 bg-zinc-100">
+	<div
+		class:list={`${container_max_w ?? "max-w-6xl"} container mx-auto px-5 gap-5 flex-wrap flex justify-between items-center`}
+	>
+		<span class="font-medium">{config.site.header.head}</span>
+		<a
+			href="/"
+			class="fotn-medium text-blue-500 px-3 bg-blue-100 rounded-md py-1.5 flex items-center gap-2"
+			><Icon name="mdi:book" /><span>Сегодняшний</span></a
+		>
+	</div>
+</header>

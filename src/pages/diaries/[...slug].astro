@@ -1,0 +1,146 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro"
+import { config } from "@/settings"
+import { Icon } from "astro-icon/components"
+import { getCollection } from "astro:content"
+
+export async function getStaticPaths() {
+	const reflection = "diaries"
+	const allPosts = await getCollection(reflection)
+	const postCount = allPosts.length
+	return allPosts.map((post, index) => ({
+		params: { slug: post.slug },
+		props: {
+			post,
+			reflection,
+			prevPost: index !== 0 ? allPosts[index - 1] : null,
+			nextPost: index + 1 < postCount ? allPosts[index + 1] : null,
+		},
+	}))
+}
+
+const { post, prevPost, nextPost } = Astro.props
+const { title } = post.data
+
+const finalTitle =
+	"Ежедневные размышления" + " - " + title + ", " + "ежик (еж) для собрания"
+
+const { Content } = await post.render()
+---
+
+<MainLayout {...post.data} title={finalTitle} type>
+	<nav class="flex justify-between">
+		<button
+			onclick="(goBackToMonth())"
+			class="text-purple-700 bg-purple-100 ring-1 ring-purple-300 px-3 py-1.5 rounded-md"
+			>Назад</button
+		>
+		<button
+			id="copyButton"
+			class="text-green-700 flex items-center gap-2 bg-green-100 ring-1 ring-green-300 px-3 py-1.5 rounded-md"
+		>
+			<Icon name="mdi:content-copy" />
+			Копировать
+		</button>
+	</nav>
+	<nav aria-label="Пагинация">
+		{
+			(nextPost || prevPost) && (
+				<div class="flex justify-between">
+					{prevPost && (
+						<a
+							class="flex gap-3 items-center text-white hover:bg-zinc-800 transition-colors ease-linear bg-zinc-950 rounded-md px-3 py-1.5"
+							href={`/diaries/${prevPost.slug}`}
+						>
+							<Icon name="mdi:arrow-left-bold" />
+							{prevPost.data.title.length > 20
+								? `${prevPost.data.title.substring(0, 20)}...`
+								: prevPost.data.title}
+						</a>
+					)}
+					{nextPost && (
+						<a
+							class="flex gap-3 items-center text-white hover:bg-zinc-800 transition-colors ease-linear bg-zinc-950 rounded-md px-3 py-1.5"
+							href={`/diaries/${nextPost.slug}`}
+						>
+							{nextPost.data.title.length > 20
+								? `${nextPost.data.title.substring(0, 20)}...`
+								: nextPost.data.title}{" "}
+							<Icon name="mdi:arrow-right-bold" />
+						</a>
+					)}
+				</div>
+			)
+		}
+	</nav>
+
+	<article class="prose-h1:text-start article prose text-justify lg:prose-lg max-w-2xl mx-auto">
+    <h1>{title}</h1>
+		<Content />
+	</article>
+	<script is:inline>
+		function goBackToMonth() {
+			const pathSegments = window.location.pathname.split("/")
+			if (pathSegments.length >= 3) {
+				const month = pathSegments[2]
+				window.location.href = `/diaries/${month}`
+			} else {
+				window.location.href = "/"
+			}
+		}
+	</script>
+
+	<script>
+		import TurndownService from "turndown"
+
+		document.getElementById("copyButton").addEventListener("click", function () {
+			const turndownService = new TurndownService({
+				headingStyle: "atx",
+				bulletListMarker: "-",
+				codeBlockStyle: "fenced",
+			})
+			turndownService.addRule("bold", {
+				filter: "h1",
+				replacement: function (content) {
+					return "🌅 **" + content + "**"
+				},
+			})
+			turndownService.addRule("bold", {
+				filter: "h2",
+				replacement: function (content) {
+					return "🌅 **" + content + "**"
+				},
+			})
+			turndownService.addRule("italic", {
+				filter: ["em", "i"],
+				replacement: function (content) {
+					return "__" + content + "__"
+				},
+			})
+			turndownService.addRule("inline-code", {
+				filter: function (node) {
+					return node.nodeName === "P" && node.textContent.includes("**__")
+				},
+				replacement: function (content) {
+					return content.replace(/\n/g, " ")
+				},
+			})
+			const markdown = turndownService.turndown(document.querySelector(".article"))
+			navigator.clipboard
+				.writeText(markdown)
+				.then(() => {
+					console.log("Markdown текст успешно скопирован!")
+					const copyButton = document.getElementById("copyButton")
+					copyButton.classList.add("text-blue-700", "bg-blue-100", "ring-blue-300")
+					copyButton.classList.remove("text-green-700", "bg-green-100", "ring-green-300")
+					setTimeout(function () {
+						copyButton.classList.add("text-green-700", "bg-green-100", "ring-green-300")
+						copyButton.classList.remove("text-blue-700", "bg-blue-100", "ring-blue-300")
+					}, 1000)
+				})
+				.catch(err => {
+					console.error("Ошибка при копировании: ", err)
+				})
+		})
+	</script>
+</MainLayout>

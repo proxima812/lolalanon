@@ -1,0 +1,46 @@
+---
+import Months from "@/components/Months.astro"
+import Pagination from "@/components/Pagination.astro"
+import Post from "@/components/Post.astro"
+import MainLayout from "@/layouts/MainLayout.astro"
+import { getCollection } from "astro:content"
+
+export async function getStaticPaths({ paginate }) {
+	const allPosts = await getCollection("diaries")
+	const sortPost = allPosts
+		.filter(a => a.data.moth === "avgust")
+		.sort((a, b) => a.data.id.length - b.data.id.length)
+	return paginate(sortPost, {
+		pageSize: 12,
+	})
+}
+
+const months = [
+	{ moth: "yanvar", name: "Январь" },
+	{ moth: "fevral", name: "Февраль" },
+	{ moth: "mart", name: "Март" },
+	{ moth: "april", name: "Апрель" },
+	{ moth: "maj", name: "Май" },
+	{ moth: "iyun", name: "Июнь" },
+	{ moth: "iyul", name: "Июль" },
+	{ moth: "avgust", name: "Август" },
+	{ moth: "sentyabr", name: "Сентябрь" },
+	{ moth: "oktyabr", name: "Октябрь" },
+	{ moth: "noyabr", name: "Ноябрь" },
+	{ moth: "dekabr", name: "Декабрь" },
+]
+function getMonthName(moth) {
+	const month = months.find(m => m.moth === moth)
+	return month ? month.name : "Месяц не указан"
+}
+const { page } = Astro.props
+const finalTitle = `Ежедневные размышления за ${getMonthName(page.data[0]?.data.moth)}`
+---
+
+<MainLayout title={finalTitle} type>
+	<Months />
+	<Pagination page={page} />
+	<section class="grid md:grid-cols-2 grid-cols-1 gap-12 lg:grid-cols-3">
+		{page.data && page.data.map(post => <Post data={post.data} slug={post.slug} />)}
+	</section>
+</MainLayout>

@@ -1,0 +1,22 @@
+---
+import Logo from "../ui/Logo.astro"
+
+const { container_max_w } = Astro.props
+---
+
+<footer class="py-5 bg-zinc-100">
+	<div class:list={`${container_max_w ?? "max-w-6xl"} container mx-auto px-5`}>
+	<div class="flex justify-end">
+	  	<a
+  			href="https://t.me/+R9Q1TS8sen8wZjcx"
+  			class="flex items-center gap-2"
+  			rel="noopener"
+  			target="_blank"
+  		>
+  			<p class="text-right"><i>Независимый комитет,</i></p>
+  			<Logo />
+  			<b>SamGold</b>
+  		</a>
+	</div>
+	</div>
+</footer>

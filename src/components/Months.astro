@@ -1,0 +1,34 @@
+---
+const moths = [
+	{ moth: "yanvar", name: "Январь" },
+	{ moth: "fevral", name: "Февраль" },
+	{ moth: "mart", name: "Март" },
+	{ moth: "april", name: "Апрель" },
+	{ moth: "maj", name: "Май" },
+	{ moth: "iyun", name: "Июнь" },
+	{ moth: "iyul", name: "Июль" },
+	{ moth: "avgust", name: "Август" },
+	{ moth: "sentyabr", name: "Сентябрь" },
+	{ moth: "oktyabr", name: "Октябрь" },
+	{ moth: "noyabr", name: "Ноябрь" },
+	{ moth: "dekabr", name: "Декабрь" },
+]
+---
+
+
+<div class="flex flex-wrap justify-center gap-3">
+	{
+		moths.map(item => (
+			<a
+				href={`/diaries/${item.moth}`}
+				class:list={
+					Astro.url.pathname.startsWith(`/diaries/${item.moth}`)
+						? " text-white transition-colors ease-linear bg-zinc-950 rounded-md px-3 py-1.5"
+						: " text-zinc-950 hover:bg-zinc-200 transition-colors ease-linear bg-zinc-100 rounded-md px-3 py-1.5"
+				}
+			>
+				{item.name}
+			</a>
+		))
+	}
+</div>
